@@ -1,0 +1,1 @@
+A knights tour algorithm using intelligent look-ahead applied through Warnsdorf's Rule.
