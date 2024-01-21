@@ -12,7 +12,7 @@ import java.util.TreeMap;
  * @version 2.0.1
  * 
  */
-public class SuperSpecialKT {
+public class KnightsTour {
 
 	private int boardLength; //the length of the board
 	private int board[][]; //the simulated board
@@ -28,7 +28,7 @@ public class SuperSpecialKT {
 	 * Constructor for this class
 	 * @param size the x*y grid of the board
 	 */
-	public SuperSpecialKT(int size) {
+	public KnightsTour(int size) {
 		boardLength = size + 4;
 		maxMoves = size * size;
 	}
@@ -39,7 +39,7 @@ public class SuperSpecialKT {
 	 */
 	public static void main(String[] args) {
 		//board of size 8x8
-		SuperSpecialKT knightsBoard = new SuperSpecialKT(8);
+		KnightsTour knightsBoard = new KnightsTour(8);
 		//start at a random point along the board
 		knightsBoard.startLocations();
 	}
