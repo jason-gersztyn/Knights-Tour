@@ -1,5 +1,3 @@
-package knightstour;
-
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Map;
@@ -11,17 +9,17 @@ import java.util.TreeMap;
  * spaces on the board, in the best case. This approach is known as Warnsdorf's Rule.
  *
  * @author Jason Gersztyn
- * @version 2.0
+ * @version 2.0.1
  * 
  */
-public class KnightsTour {
+public class SuperSpecialKT {
 
-	private int boardLength; //The length of the board
-	private int board[][]; //The simulated board
+	private int boardLength; //the length of the board
+	private int board[][]; //the simulated board
 	private int maxMoves; //it should take no more than this many moves to solve the puzzle
 	boolean solved = false; //tells whether or not the board is solved
 
-	//List of possible moves for the knight
+	//list of possible moves for the knight
 	private final Point[] MOVES = new Point[]{new Point(-2, -1),
 			new Point(-2, 1), new Point(2, -1), new Point(2, 1), new Point(-1, -2),
 			new Point(-1, 2), new Point(1, -2), new Point(1, 2)};
@@ -30,35 +28,34 @@ public class KnightsTour {
 	 * Constructor for this class
 	 * @param size the x*y grid of the board
 	 */
-	public KnightsTour(int size) {
+	public SuperSpecialKT(int size) {
 		boardLength = size + 4;
 		maxMoves = size * size;
 	}
 
 	/**
-	 * main method
+	 * Main method
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//if(args.length < 1) {
-		//	System.out.println("Input a size for the board.");
-		//	System.exit(0);
-		//}
-		//int size = Integer.valueOf(args[0].trim()).intValue();
-		//BTKnights knightsBoard = new BTKnights(size);
-
-		KnightsTour knightsBoard = new KnightsTour(30);
-
+		//board of size 8x8
+		SuperSpecialKT knightsBoard = new SuperSpecialKT(8);
 		//start at a random point along the board
-		int row = 2 + (int) (Math.random() * (knightsBoard.getValidLength()));
-		int col = 2 + (int) (Math.random() * (knightsBoard.getValidLength()));
-
-		knightsBoard.solveTour(row,col); //begin the tour at this point
+		knightsBoard.startLocations();
+	}
+	
+	/**
+	 * Designates the starting space for the knight.
+	 */
+	private void startLocations() {
+		int row = 2 + (int) (Math.random() * (getValidLength()));
+		int col = 2 + (int) (Math.random() * (getValidLength()));
+		solveTour(row,col); //begin the tour at this point
 	}
 
 	/**
-	 * The space within the two-dimensional array that actually represents the board. Any square with negative two
-	 * as a value can be considered padding.
+	 * The space within the two-dimensional array that actually represents the board.
+	 * Any square with negative two as a value can be considered padding.
 	 * @return the valid length and height of the board
 	 */
 	private int getValidLength() {
@@ -66,7 +63,7 @@ public class KnightsTour {
 	}
 
 	/**
-	 * Helper method to determine if a square is safe for the knight
+	 * Helper method to determine if a square is safe for the knight.
 	 * @param row the row the knight is on
 	 * @param col the column the knight is on
 	 * @param grid the current state of the board which the move is beign performed on
@@ -91,9 +88,6 @@ public class KnightsTour {
 
 		for (int i = 0; i < maxSize; i++) {
 			for (ArrayList<Integer> innerList : boardToPrint) {
-				//Not needed since both dimensions of the array list are the same length
-				//if (i > innerList.size() - 1) { 
-				//    System.out.print("x ");
 				if(innerList.get(i) != -2) {
 					System.out.printf("%-4d", innerList.get(i));
 				}
@@ -103,8 +97,8 @@ public class KnightsTour {
 	}
 
 	/**
-	 * Solves the knight's tour using backtracking
-	 * This method also converts the board into a two dimensional array list
+	 * Solves the knight's tour using backtracking.
+	 * This method also converts the board into a two dimensional array list.
 	 * @param sRow the starting row
 	 * @param sCol the starting column
 	 * @return true if there is a solution
@@ -129,7 +123,7 @@ public class KnightsTour {
 	}  
 
 	/**
-	 * Recursive helper method which will solve the knight's tour
+	 * Recursive helper method which will solve the knight's tour.
 	 * @param row the current row
 	 * @param col the current column
 	 * @param nMove the number of moves made thus far
@@ -145,10 +139,7 @@ public class KnightsTour {
 		}
 
 		if(!solved) {
-			//TreeMap<ArrayList<Integer>,Point> moves = optimalMove(row, col, nMove, grid);
 			TreeMap<Integer,Point> moves = optimalMove(row, col, nMove, grid);
-
-			//for(Point p : MOVES) { //CHANGE TO "moves"
 			for (Map.Entry<Integer,Point> stuff : moves.entrySet()) {
 				Point p = stuff.getValue();
 				ArrayList<ArrayList<Integer>> gridCopy = boardCopier(grid);
@@ -157,17 +148,7 @@ public class KnightsTour {
 				int nextCol = col + p.y;
 
 				gridCopy.get(nextRow).set(nextCol, nMove);
-
-
-				//if(nMove == maxMoves - 2) { //FOR TESTING ONLY
-				//System.out.println("STOP!");
-				//TEST ONLY
-				//printMoves(gridCopy);
-				//System.out.println();
-				//System.out.println(); //TESSSSSTT
-				//}
-
-
+				
 				if(solveRecurs(nextRow, nextCol, nMove + 1, gridCopy)) {
 					return true;
 				}
@@ -201,11 +182,11 @@ public class KnightsTour {
 				//temporary board to simulate the following moves
 				ArrayList<ArrayList<Integer>> tempBoard = boardCopier(grid);
 				//use max moves since the value is arbitrary and this array is temporary
-				tempBoard.get(nRow).set(nCol, move + 1000); //the move will easily stick out in debugging
+				tempBoard.get(nRow).set(nCol, move + 1000); //this move will easily stick out in debugging
 				for (Point check : MOVES) {
 					int r = nRow + check.x;
 					int c = nCol + check.y;
-					//not that we only check for a legal move and do not actually move
+					//note that we only check for a legal move and do not actually move
 					if (legalMove(r, c, tempBoard)) {
 						possibleMoves++; //increase the count if this is a possible move from this given location
 					}
@@ -227,7 +208,7 @@ public class KnightsTour {
 	}
 
 	/**
-	 * copy the two dimensional array list exactly into a new two dimensional array array list
+	 * Copy the two dimensional array list into an identical new two dimensional array list.
 	 * @param grid the array list to be copied
 	 * @return the carbon copy of the list
 	 */
@@ -243,11 +224,11 @@ public class KnightsTour {
 
 	/**
 	 * Create the board to perform the knight's tour on. The board created is a two dimensional array.
-	 * Note that a board is padded on all sides. The valid board are does not include the padding.
+	 * Note that a board is padded on all sides. The valid board does not include the padding.
 	 */
 	private void initializeBoard() {
 		board = new int[boardLength][boardLength];
-		//Make all of the board -1 because have not visited any square
+		//make all of the board -1 because have not visited any square
 
 		for (int r = 0; r < boardLength; r++) {
 			for (int c = 0; c < boardLength; c++) {
